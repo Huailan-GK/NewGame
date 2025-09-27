@@ -11,6 +11,10 @@ private:
     SDL_Window* window; //窗口
     SDL_Renderer* renderer;  //SDL渲染器
     bool is_running;    //是否运行
+
+    TTF_Font* font; //字体对象
+    std::string message;    //提示信息
+    Uint32 message_time;    //时间戳
     
     const int SCREEN_WIDTH=800; //窗口宽度
     const int SCREEN_HEIGHT=600; //窗口高度
@@ -21,6 +25,8 @@ private:
 public:
     //构造函数
     FarmGame();
+    //析构函数
+    ~FarmGame();
 
     //初始化SDL和游戏资源
     bool Init();
@@ -43,5 +49,11 @@ private:
 
     //清理资源
     void CleanUp();
+
+    //更新提示信息状态
+    void Update();
+
+    //渲染文字的函数
+    void RenderText(const std::string& text,int x,int y,SDL_Color color);
 };
 #endif
