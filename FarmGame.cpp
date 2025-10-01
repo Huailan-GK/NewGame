@@ -3,9 +3,12 @@
 
 //构造函数
 FarmGame::FarmGame():
-    window(nullptr),renderer(nullptr),is_running(0)
+    window(nullptr),renderer(nullptr),is_running(0),selected_crop_type(1)
 {
     InitializeLands();
+    seed_nums[1]=9;
+    seed_nums[2]=8;
+    seed_nums[3]=5;
 }
 
 //析构函数
@@ -103,6 +106,28 @@ void FarmGame::HandleInput()
         if(event.type==SDL_QUIT)    is_running=0;
         else if (event.type==SDL_MOUSEBUTTONDOWN)
             HandleMouseClick(event.button.x,event.button.y);
+        
+        if(event.type==SDL_KEYDOWN)
+        {
+            switch(event.key.keysym.sym)
+            {
+                case SDLK_1:
+                    selected_crop_type=1;
+                    message="当前选择的是小麦，种子数量为"+std::to_string(seed_nums[selected_crop_type]);
+                    message_time=SDL_GetTicks();
+                    break;
+                case SDLK_2:
+                    selected_crop_type=2;
+                    message="当前选择的是胡萝卜，种子数量为"+std::to_string(seed_nums[selected_crop_type]);
+                    message_time=SDL_GetTicks();
+                    break;
+                case SDLK_3:
+                    selected_crop_type=3;
+                    message="当前选择的是土豆，种子数量为"+std::to_string(seed_nums[selected_crop_type]);
+                    message_time=SDL_GetTicks();
+                    break;
+            }
+        }
     }
 }
 
@@ -123,7 +148,7 @@ void FarmGame::HandleMouseClick(int x,int y)
             }
             else
             {
-                message="这块土地已解锁，可以种植！";
+                PlantSelectedCrop(land);
             }
             message_time=SDL_GetTicks();    //记录时间戳
             break;
@@ -165,23 +190,46 @@ void FarmGame::Render()
         //绘制土地边框
         SDL_SetRenderDrawColor(renderer,50,150,50,255);//深绿色
         SDL_RenderDrawRect(renderer,&land_rect);
+
+        //绘制作物
+        if(land.GetCrop())
+        {
+            Crop* crop=land.GetCrop();
+            SDL_Color crop_color=crop->GetColor();
+
+            int center_x=pos.x+LAND_SIZE/2;
+            int center_y=pos.y+LAND_SIZE/2;
+            int radius=LAND_SIZE/3;
+
+            DrawCircle(center_x,center_y,radius,crop_color);
+        }
     }
 
     //绘制提示信息
     if(!message.empty())
     {
         SDL_Colour text_color={255,0,0,255};    //红色
-        RenderText(message,300,550,text_color);
+        RenderText(message,200,550,text_color);
     }
 
     //更新屏幕显示
     SDL_RenderPresent(renderer);
 }
 
-//更新文字信息
+//更新状态
 void FarmGame::Update()
 {
+    //更新信息
     if(!message.empty()&&SDL_GetTicks()-message_time>2000)  message.clear();
+
+    //更新农作物生长状态
+    for(auto& land:lands)
+    {
+        if(land.GetCrop())
+        {
+            land.UpdateCropGrowth();
+        }
+    }
 }
 
 //渲染文字
@@ -236,4 +284,52 @@ void FarmGame::CleanUp()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+//种植选中植物
+void FarmGame::PlantSelectedCrop(Land& land)
+{
+    if(seed_nums[selected_crop_type]<=0)
+    {
+        message="该作物种子数量不足！";
+        message_time=SDL_GetTicks();
+        return ;
+    }
+
+    Crop* new_crop=nullptr;
+    switch(selected_crop_type)
+    {
+        case 1:new_crop=new Wheat();break;
+        case 2:new_crop=new Carrat();break;
+        case 3:new_crop=new Potato();break;
+    }
+
+    //种植
+    if(land.PlantCrop(new_crop))
+    {
+        --seed_nums[selected_crop_type];
+        message="种植了"+new_crop->GetName();
+    }
+    else
+    {
+        message="种植失败，请检查是否有作物或者土地是否解锁";
+    }
+    message_time=SDL_GetTicks();
+}
+
+//绘制圆形
+void FarmGame::DrawCircle(int x,int y,int r,SDL_Color color)
+{
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+    for(int dy=-r;dy<=r;dy++)
+    {
+        for(int dx=-r;dx<=r;dx++)
+        {
+            if(dx*dx+dy*dy<=r*r)
+            {
+                SDL_RenderDrawPoint(renderer,x+dx,y+dy);
+            }
+        }
+    }
 }

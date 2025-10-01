@@ -22,6 +22,9 @@ private:
 
     std::vector<Land> lands;    //土地群
 
+    int selected_crop_type; //1:小麦，2:胡萝卜，3:土豆
+    int seed_nums[4];       //种子数量
+
 public:
     //构造函数
     FarmGame();
@@ -44,16 +47,22 @@ private:
     //处理鼠标点击
     void HandleMouseClick(int x,int y);
 
+    //绘制圆形
+    void DrawCircle(int x,int y,int r,SDL_Color color);
+
     //游戏画面渲染
     void Render();
 
     //清理资源
     void CleanUp();
 
-    //更新提示信息状态
+    //更新提示状态
     void Update();
 
     //渲染文字的函数
     void RenderText(const std::string& text,int x,int y,SDL_Color color);
+
+    //种植选中植物
+    void PlantSelectedCrop(Land& land);
 };
 #endif
