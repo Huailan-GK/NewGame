@@ -9,6 +9,8 @@ FarmGame::FarmGame():
     seed_nums[1]=9;
     seed_nums[2]=8;
     seed_nums[3]=5;
+    money=0;
+    money_message="金币数量：0";
 }
 
 //析构函数
@@ -205,6 +207,8 @@ void FarmGame::Render()
         }
     }
 
+    //绘制金币信息
+    RenderText(money_message,50,50,{255,215,0,255});
     //绘制提示信息
     if(!message.empty())
     {

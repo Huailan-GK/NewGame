@@ -24,6 +24,9 @@ private:
 
     int selected_crop_type; //1:小麦，2:胡萝卜，3:土豆
     int seed_nums[4];       //种子数量
+    int money;
+    std::string money_message;
+    Uint32 money_message_time;
 
 public:
     //构造函数
