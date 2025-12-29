@@ -74,8 +74,8 @@ public:
 class Wheat:public Crop
 {
 public:
-    //小麦，20秒成熟，10金币
-    Wheat():Crop("小麦",20,10){}
+    //小麦，5秒成熟，10金币
+    Wheat():Crop("小麦",5,10){}
 
     SDL_Color GetColor() const override
     {
@@ -89,8 +89,8 @@ public:
 class Carrat:public Crop
 {
 public:
-    //胡萝卜，25秒成熟，15金币
-    Carrat():Crop("胡萝卜",20,15){}
+    //胡萝卜，10秒成熟，25金币
+    Carrat():Crop("胡萝卜",10,25){}
 
     SDL_Color GetColor() const override
     {
@@ -104,8 +104,8 @@ public:
 class Potato:public Crop
 {
 public:
-    //土豆，30秒成熟，20金币
-    Potato():Crop("土豆",30,20){}
+    //土豆，15秒成熟，50金币
+    Potato():Crop("土豆",15,50){}
 
     SDL_Color GetColor() const override
     {

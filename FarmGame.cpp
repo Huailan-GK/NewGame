@@ -10,7 +10,6 @@ FarmGame::FarmGame():
     seed_nums[2]=8;
     seed_nums[3]=5;
     money=0;
-    money_message="金币数量：0";
 }
 
 //析构函数
@@ -208,6 +207,7 @@ void FarmGame::Render()
     }
 
     //绘制金币信息
+    money_message="金币数量:"+std::to_string(money);
     RenderText(money_message,50,50,{255,215,0,255});
     //绘制提示信息
     if(!message.empty())
@@ -299,26 +299,38 @@ void FarmGame::PlantSelectedCrop(Land& land)
         message_time=SDL_GetTicks();
         return ;
     }
-
-    Crop* new_crop=nullptr;
-    switch(selected_crop_type)
+    
+    //是否有植物
+    if(land.GetCrop())
     {
-        case 1:new_crop=new Wheat();break;
-        case 2:new_crop=new Carrat();break;
-        case 3:new_crop=new Potato();break;
-    }
-
-    //种植
-    if(land.PlantCrop(new_crop))
-    {
-        --seed_nums[selected_crop_type];
-        message="种植了"+new_crop->GetName();
+        Crop* t=land.GetCrop();
+        if(t->GetRipe())
+        {
+            message=t->GetName()+"已成熟,收获"+std::to_string(t->GetValue())+"金币";
+            money+=t->GetValue();
+            land.Harvest();
+        }
+        else
+            message="还有"+std::to_string(t->GetRemainingTime())+"秒成熟";
     }
     else
     {
-        message="种植失败，请检查是否有作物或者土地是否解锁";
+        Crop* new_crop=nullptr;
+        switch(selected_crop_type)
+        {
+            case 1:new_crop=new Wheat();break;
+            case 2:new_crop=new Carrat();break;
+            case 3:new_crop=new Potato();break;
+        }
+        //种植
+        land.PlantCrop(new_crop);
+        --seed_nums[selected_crop_type];
+        message="种植了"+new_crop->GetName();
+        message_time=SDL_GetTicks();
     }
-    message_time=SDL_GetTicks();
+    
+
+    
 }
 
 //绘制圆形

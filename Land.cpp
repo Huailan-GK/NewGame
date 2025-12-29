@@ -23,14 +23,9 @@ void Land::SetLocked(bool locked)
 }
 
 //种植作物
-bool Land::PlantCrop(Crop* new_crop)
+void Land::PlantCrop(Crop* new_crop)
 {
-    if(!is_locked&&!crop)
-    {
-        crop=new_crop;
-        return 1;
-    }
-    return 0;
+    crop=new_crop;
 }
 
 //更新作物生长
