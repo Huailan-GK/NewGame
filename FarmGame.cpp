@@ -9,7 +9,7 @@ FarmGame::FarmGame():
     seed_nums[1]=9;
     seed_nums[2]=8;
     seed_nums[3]=5;
-    money=0;
+    money=1000;
 }
 
 //析构函数
@@ -106,7 +106,17 @@ void FarmGame::HandleInput()
         //窗口关闭
         if(event.type==SDL_QUIT)    is_running=0;
         else if (event.type==SDL_MOUSEBUTTONDOWN)
-            HandleMouseClick(event.button.x,event.button.y);
+        {
+            if(event.button.button==SDL_BUTTON_LEFT)
+            {
+                HandleMouseClick(event.button.x,event.button.y);
+            }
+            else if(event.button.button==SDL_BUTTON_RIGHT)
+            {
+                HandleMouseRightClick(event.button.x,event.button.y);
+            }
+        }
+            
         
         if(event.type==SDL_KEYDOWN)
         {
@@ -145,7 +155,8 @@ void FarmGame::HandleMouseClick(int x,int y)
         {
             if(land.IsLocked())
             {
-                message="这块土地已锁定，无法种植！";
+                message="这块土地已锁定，无法种植！需要"+
+                std::to_string(land.GetValue())+"金币";
             }
             else
             {
@@ -157,6 +168,34 @@ void FarmGame::HandleMouseClick(int x,int y)
     }
 }
 
+//处理鼠标右键
+void FarmGame::HandleMouseRightClick(int x,int y)
+{
+    for(auto& land:lands)
+    {
+        Position pos=land.GetPosition();
+
+        //矩形碰撞检测
+        if(x>=pos.x&&x<=pos.x+LAND_SIZE&&
+            y>=pos.y&&y<=pos.y+LAND_SIZE)
+        {
+            if(land.IsLocked())
+            {
+                if(money<land.GetValue())
+                {
+                    message="金币不够";
+                }
+                else
+                {
+                    land.SetLocked(0);
+                    money-=land.GetValue();
+                }
+            }
+            message_time=SDL_GetTicks();    //记录时间戳
+            break;
+        }
+    }
+}
 //渲染画面
 void FarmGame::Render()
 {
@@ -293,19 +332,13 @@ void FarmGame::CleanUp()
 //种植选中植物
 void FarmGame::PlantSelectedCrop(Land& land)
 {
-    if(seed_nums[selected_crop_type]<=0)
-    {
-        message="该作物种子数量不足！";
-        message_time=SDL_GetTicks();
-        return ;
-    }
-    
     //是否有植物
     if(land.GetCrop())
     {
         Crop* t=land.GetCrop();
         if(t->GetRipe())
         {
+            t->Harvest();
             message=t->GetName()+"已成熟,收获"+std::to_string(t->GetValue())+"金币";
             money+=t->GetValue();
             land.Harvest();
@@ -315,6 +348,12 @@ void FarmGame::PlantSelectedCrop(Land& land)
     }
     else
     {
+        if(seed_nums[selected_crop_type]<=0)
+        {
+            message="该作物种子数量不足！";
+            message_time=SDL_GetTicks();
+            return ;
+        }
         Crop* new_crop=nullptr;
         switch(selected_crop_type)
         {
@@ -326,11 +365,7 @@ void FarmGame::PlantSelectedCrop(Land& land)
         land.PlantCrop(new_crop);
         --seed_nums[selected_crop_type];
         message="种植了"+new_crop->GetName();
-        message_time=SDL_GetTicks();
-    }
-    
-
-    
+    } 
 }
 
 //绘制圆形

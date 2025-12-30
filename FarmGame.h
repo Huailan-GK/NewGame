@@ -49,6 +49,8 @@ private:
 
     //处理鼠标点击
     void HandleMouseClick(int x,int y);
+    //处理鼠标右键
+    void HandleMouseRightClick(int x,int y);
 
     //绘制圆形
     void DrawCircle(int x,int y,int r,SDL_Color color);

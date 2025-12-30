@@ -2,7 +2,10 @@
 
 //构造函数
 Land::Land(Position p):
-    pos(p),is_locked(1),crop(0){}
+    pos(p),is_locked(1),crop(0)
+    {
+        value=p.x/4+p.y*2;
+    }
 
 //获取土地位置
 Position Land::GetPosition()

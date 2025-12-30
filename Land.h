@@ -8,6 +8,7 @@ private:
     Position pos;//土地位置
     bool is_locked;
     Crop* crop;
+    int value;
 public:
     //构造函数，初始化土地信息
     Land(Position p);
@@ -27,7 +28,10 @@ public:
     void PlantCrop(Crop* new_crop);
 
     //获取作物
-    Crop* GetCrop() const {return crop;};
+    Crop* GetCrop() const {return crop;}
+
+    //获取解锁金币
+    int GetValue() const    {return value;}
 
     //更新作物生长
     void UpdateCropGrowth();
