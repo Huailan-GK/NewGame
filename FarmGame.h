@@ -4,6 +4,7 @@
 #include<SDL2/SDL_ttf.h>
 #include<vector>
 #include"Land.h"
+#include"Shop.h"
 
 class FarmGame
 {
@@ -28,6 +29,7 @@ private:
     std::string money_message;
     Uint32 money_message_time;
 
+    Shop* shop;
 public:
     //构造函数
     FarmGame();
@@ -69,5 +71,10 @@ private:
 
     //种植选中植物
     void PlantSelectedCrop(Land& land);
+
+    
+
+    
+    
 };
 #endif

@@ -9,7 +9,7 @@ FarmGame::FarmGame():
     seed_nums[1]=9;
     seed_nums[2]=8;
     seed_nums[3]=5;
-    money=1000;
+    money=10000;
 }
 
 //析构函数
@@ -21,6 +21,8 @@ FarmGame::~FarmGame()
         TTF_CloseFont(font);
         font=nullptr;
     }
+    if(shop)
+        delete shop;
 }
 
 void FarmGame::InitializeLands()
@@ -94,6 +96,8 @@ bool FarmGame::Init()
     }
 
     is_running=1;
+
+    shop=new Shop(renderer,font);
     return 1;
 }
 
@@ -137,6 +141,17 @@ void FarmGame::HandleInput()
                     message="当前选择的是土豆，种子数量为"+std::to_string(seed_nums[selected_crop_type]);
                     message_time=SDL_GetTicks();
                     break;
+                case SDLK_s:
+                    shop->ToggleShop();
+                    if(shop->IsOpen())
+                    {
+                        message="商店打开，请购买商品";
+                    }
+                    else
+                    {
+                        message="商店已关闭";
+                    }
+                    message_time=SDL_GetTicks();
             }
         }
     }
@@ -255,6 +270,9 @@ void FarmGame::Render()
         RenderText(message,200,550,text_color);
     }
 
+    //渲染商店
+    if(shop->IsOpen())
+        shop->RenderShop();
     //更新屏幕显示
     SDL_RenderPresent(renderer);
 }
@@ -384,3 +402,4 @@ void FarmGame::DrawCircle(int x,int y,int r,SDL_Color color)
         }
     }
 }
+
