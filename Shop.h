@@ -22,6 +22,8 @@ private:
     bool is_shop_open;  //商店是否打开
     SDL_Renderer* renderer;
     TTF_Font* font;
+    int shop_x,shop_y;
+    int item_start_y,item_line_height;
 
     const int SHOP_WIDTH=400;
     const int SHOP_HEIGHT=300;
@@ -34,6 +36,11 @@ public:
     renderer(renderer),font(ttf),is_shop_open(0)
     {   
         InitShopItems();
+        //计算商店坐标
+        shop_x=(SCREEN_WIDTH-SHOP_WIDTH)/2;
+        shop_y=(SCREEN_HEIGHT-SHOP_HEIGHT)/2;
+        item_start_y=shop_y+50;
+        item_line_height=60;
     }
     ~Shop()=default;
 

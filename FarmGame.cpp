@@ -113,7 +113,32 @@ void FarmGame::HandleInput()
         {
             if(event.button.button==SDL_BUTTON_LEFT)
             {
-                HandleMouseClick(event.button.x,event.button.y);
+                if(shop->IsOpen())
+                {
+                    ShopItem* purchased_item=shop->Purchase(event.button.x,event.button.y);
+                    if(purchased_item)
+                    {
+                        if(money>=purchased_item->price)
+                        {
+                            money-=purchased_item->price;
+                            ++seed_nums[purchased_item->crop_type];
+                            message = "成功购买" + purchased_item->name + "！剩余金币：" + std::to_string(money);
+                        }
+                        else
+                        {
+                            message = "金币不足！购买" + purchased_item->name + "需要" + std::to_string(purchased_item->price) + "金币";
+                        }
+                    }
+                    else
+                    {
+                        message = "请点击有效的商品！";
+                    }
+                    message_time=SDL_GetTicks();
+                }
+                else
+                {
+                    HandleMouseClick(event.button.x,event.button.y);
+                }
             }
             else if(event.button.button==SDL_BUTTON_RIGHT)
             {

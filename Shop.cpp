@@ -27,9 +27,7 @@ void Shop::RenderShop()
     //设置混合模式
     SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_BLEND);
 
-    //计算商店坐标
-    int shop_x=(SCREEN_WIDTH-SHOP_WIDTH)/2;
-    int shop_y=(SCREEN_HEIGHT-SHOP_HEIGHT)/2;
+   
 
     //绘制商店背景
     SDL_SetRenderDrawColor(renderer,50,50,50,150);  //半透明深灰色
@@ -39,8 +37,6 @@ void Shop::RenderShop()
     SDL_Color title_color={255,215,0,255};
     RenderText("农场商店",shop_x+SHOP_WIDTH/2-40,shop_y+10,title_color);
 
-    int item_start_y=shop_y+50;
-    int item_line_height=60;
     SDL_Color item_color={255,255,255,255};
     SDL_Color price_color={0,255,0,255};
     
@@ -63,6 +59,15 @@ void Shop::RenderShop()
     SDL_SetRenderDrawBlendMode(renderer, old_blend_mode);
 }
 
+ShopItem* Shop::Purchase(int x,int y)
+{
+    if(x<shop_x||x>shop_x+SHOP_WIDTH||y<shop_y||y>shop_y+SHOP_HEIGHT)
+        return nullptr;
+    int item_index=(y-item_start_y)/item_line_height;
+    if(item_index<0||item_index>=shop_items.size()||y<item_start_y)
+        return nullptr;
+    return &shop_items[item_index];
+}
 //渲染文字
 void Shop::RenderText(const std::string& text,int x,int y,SDL_Color color)
 {
